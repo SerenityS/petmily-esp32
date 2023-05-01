@@ -12,9 +12,9 @@ bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint8_t txValue = 0;
 
-#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+#define SERVICE_UUID           "7e1ba1a3-1bf8-460a-b13f-22b449163892"
+#define CHARACTERISTIC_UUID_RX "11e787ed-7900-4594-9180-4699986ad978"
+#define CHARACTERISTIC_UUID_TX "fe82f81a-ca0c-47d1-ac7d-b35901796fad"
 
 
 class MyServerCallbacks: public BLEServerCallbacks {
