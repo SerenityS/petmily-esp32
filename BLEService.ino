@@ -37,7 +37,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         for (int i = 0; i < rxValue.length(); i++)
           Serial.print(rxValue[i]);
 
-                
+        Serial.println();
         StaticJsonDocument<200> doc;
 
         DeserializationError error = deserializeJson(doc, rxValue);
@@ -47,14 +47,17 @@ class MyCallbacks: public BLECharacteristicCallbacks {
           return;
         }
 
-        const char * name = doc["ssid"];
+        const char * cmd = doc["doc"];
+        const char * ssid = doc["ssid"];
         const char * pw = doc["pw"];
 
-        Serial.println(name);
-        Serial.println(pw);
+        //Serial.println(ssid);
+        //Serial.println(pw);
 
         Serial.println();
         Serial.println("*********");
+
+        connectWifi(ssid, pw);
       }
     }
 };
@@ -95,13 +98,6 @@ void startBLE() {
 }
 
 void loopBLE() {
-    if (deviceConnected) {
-        pTxCharacteristic->setValue(&txValue, 1);
-        pTxCharacteristic->notify();
-        txValue++;
-		delay(10); // bluetooth stack will go into congestion, if too many packets are sent
-	}
-
     // disconnecting
     if (!deviceConnected && oldDeviceConnected) {
         delay(500); // give the bluetooth stack the chance to get things ready
@@ -114,4 +110,11 @@ void loopBLE() {
 		// do stuff here on connecting
         oldDeviceConnected = deviceConnected;
     }
+}
+
+void sendNotify(int i) {
+  if (deviceConnected) {
+        pTxCharacteristic->setValue(i);
+        pTxCharacteristic->notify();
+  }
 }
