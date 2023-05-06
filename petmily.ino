@@ -6,10 +6,12 @@ void setup() {
 }
 
 void loop() {
-  if(Serial2.available() > 0){
-    String hex = String(Serial2.read());
-    Serial.print(hex);
+  if (Serial2.available() > 0) {
+    //String hex = String(Serial2.read());
+    int val = Serial2.read();
+    Serial.print(val);
+    sendNotify(val);
   }
-  
+
   loopBLE();
 }
