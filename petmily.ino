@@ -116,6 +116,8 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(9600);
 
+  Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
+
   hasCred = checkCred();
   // if(!hasCred)
   startBLE();
