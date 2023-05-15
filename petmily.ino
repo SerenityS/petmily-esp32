@@ -1,5 +1,11 @@
+// Preference
+#include <Preferences.h>
+
+Preferences pref;
+
 // Wifi
 #include <WiFi.h>
+
 bool hasCred = false;
 
 void WiFiEvent(WiFiEvent_t event) {
@@ -97,7 +103,13 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(IPAddress(info.got_ip.ip_info.ip.addr));
-  sendNotify("wifi: true");
+
+  // Set true valid
+  pref.begin("WifiCred", false);
+  pref.putBool("valid", true);
+
+  // Send Wifi Connect Status
+  writeString("{\"wifi\": 1}");
 }
 
 void setup() {
@@ -105,6 +117,7 @@ void setup() {
   Serial2.begin(9600);
 
   hasCred = checkCred();
+  // if(!hasCred)
   startBLE();
 }
 
@@ -113,7 +126,7 @@ void loop() {
     //String hex = String(Serial2.read());
     int val = Serial2.read();
     Serial.print(val);
-    sendNotify(val);
+    writeInt(val);
   }
 
   loopBLE();

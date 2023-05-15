@@ -1,11 +1,6 @@
 // Wifi
 #include <WiFi.h>
 
-// Preference
-#include <Preferences.h>
-
-Preferences pref;
-
 // Wifi Credential
 String ssid;
 String pw;
@@ -29,6 +24,8 @@ bool checkCred() {
       Serial.println("Read from preferences:");
       Serial.println("SSID: " + ssid + " password: " + pw);
       hasCredentials = true;
+
+      connectWifi(ssid, pw);
     }
   } else {
     Serial.println("Could not find preferences, need send data over BLE");
@@ -43,7 +40,8 @@ void connectWifi(String ssid, String pw) {
   WiFiEventId_t eventID = WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
     Serial.print("WiFi lost connection. Reason: ");
     Serial.println(info.wifi_sta_disconnected.reason);
-  }, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+  },
+                                       WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
   WiFi.disconnect(true);
   WiFi.enableSTA(true);
