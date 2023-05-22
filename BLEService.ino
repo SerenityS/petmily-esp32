@@ -10,7 +10,7 @@
 
 BLEServer *pServer = NULL;
 BLECharacteristic *pTxCharacteristic;
-bool deviceConnected = false;
+extern bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint8_t txValue = 0;
 

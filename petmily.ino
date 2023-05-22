@@ -3,10 +3,47 @@
 
 Preferences pref;
 
+// WebSocket
+#include <WebSocketsClient.h>
+
 // Wifi
 #include <WiFi.h>
 
 bool hasCred = false;
+
+// Unique Chip ID
+String chip_id;
+
+// Global extern Variables
+extern bool deviceConnected;
+extern bool is_scale_enable;
+
+// Local Variables for control sensors
+bool is_cover_open = false;
+
+
+void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
+  switch (type) {
+    case WStype_DISCONNECTED:
+      Serial.printf("[WS] Disconnected!\n");
+      break;
+    case WStype_CONNECTED:
+      Serial.printf("[WS] Connected to url: %s\n", payload);
+      break;
+    case WStype_TEXT:
+      Serial.printf("[WS] get text: %s\n", payload);
+      // send message to server
+      // webSocket.sendTXT("message here");
+      break;
+    case WStype_BIN:
+    case WStype_ERROR:
+    case WStype_FRAGMENT_TEXT_START:
+    case WStype_FRAGMENT_BIN_START:
+    case WStype_FRAGMENT:
+    case WStype_FRAGMENT_FIN:
+      break;
+  }
+}
 
 void WiFiEvent(WiFiEvent_t event) {
   Serial.printf("[WiFi-event] event: %d\n", event);
@@ -109,27 +146,54 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   pref.putBool("valid", true);
 
   // Send Wifi Connect Status
-  writeString("{\"wifi\": 1}");
+  if (deviceConnected) {
+    writeString("{\"wifi\": 1, \"chip_id\": " + String(ESP.getEfuseMac(), HEX) + "}");
+  }
 }
 
 void setup() {
   Serial.begin(115200);
-  Serial2.begin(9600);
 
-  Serial.printf("\nCHIP MAC: %012llx\n", ESP.getEfuseMac());
+  Serial.printf("\nESP32 Unique CHIP ID: %llx\n", ESP.getEfuseMac());
 
+  // Check has Wifi Credential
   hasCred = checkCred();
+
+  // Initialize WebSocket
+  WebSocket_setup();
+
+  // Initalize BLE if no credential
   // if(!hasCred)
   startBLE();
+
+  // Initialize Serial for FDX-B Tag Reader
+  Serial2.begin(9600);
+
+  // Initialize HX711 Scale
+  HX711_setup();
+
+  // TEMP: Initialize Motion Sensor LED
+  pinMode(13, OUTPUT);
 }
 
 void loop() {
-  if (Serial2.available() > 0) {
-    //String hex = String(Serial2.read());
-    int val = Serial2.read();
-    Serial.print(val);
-    writeInt(val);
+  if (FDXB_check()) {
+    if (is_cover_open) {
+      is_cover_open = false;
+      digitalWrite(13, 0);
+    } else {
+      is_cover_open = true;
+      digitalWrite(13, 255);
+    }
   }
 
-  loopBLE();
+  if (is_scale_enable) {
+    HX711_print();
+  }
+
+  if (deviceConnected) {
+    loopBLE();
+  } else if (WiFi.status() == WL_CONNECTED) {
+    WebSocket_loop();
+  }
 }

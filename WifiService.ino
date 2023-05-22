@@ -7,7 +7,7 @@ String pw;
 
 // Status Variable
 bool hasCredentials = false;
-volatile bool isConnected = false;
+bool isConnected = false;
 bool connStatusChanged = false;
 
 bool checkCred() {
@@ -25,7 +25,7 @@ bool checkCred() {
       Serial.println("SSID: " + ssid + " password: " + pw);
       hasCredentials = true;
 
-      connectWifi(ssid, pw);
+      connectWifi("DBLAB", "dbiptimen604t!");
     }
   } else {
     Serial.println("Could not find preferences, need send data over BLE");
@@ -48,8 +48,7 @@ void connectWifi(String ssid, String pw) {
   WiFi.mode(WIFI_STA);
 
   Serial.print("Start Wifi Connection to ");
-  Serial.print(ssid);
-  Serial.println(pw);
+  Serial.println(ssid);
 
   WiFi.begin(ssid.c_str(), pw.c_str());
 }
