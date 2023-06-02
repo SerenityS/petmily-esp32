@@ -25,7 +25,23 @@ void WebSocket_loop() {
   webSocket.loop();
 }
 
-void sendDeviceData() {
-  Serial.println("ws: Send Device Data");
-  webSocket.sendTXT("{\"cmd\": \"device_data\", \"chip_id\": \"" + String(ESP.getEfuseMac(), HEX) + "\", \"bowl_amount\": " + scale.get_units() + ", \"feed_box_amount\": 1000}");
+void runCmd(uint8_t* payload){
+  StaticJsonDocument<200> doc;
+
+  DeserializationError error = deserializeJson(doc, payload);
+
+  if (error) {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return;
+  }
+
+  String command = doc["command"];
+
+  if(strcmp(command.c_str(), "feed") == 0) {
+    int feedAmount = doc["feed_amount"];
+    // TODO: Implement Feeding
+  } else if (strcmp(command.c_str(), "schedule") == 0) {
+    getSchedule();
+  }
 }

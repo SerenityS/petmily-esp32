@@ -19,7 +19,8 @@ extern bool deviceConnected;
 extern bool is_scale_enable;
 
 // Local Variables for control
-unsigned long lastTime = 0;  // Timer for deviceData
+unsigned long lastHttpEventTime = 0;
+unsigned long lastScheduleEventTime = 0;
 
 bool is_cover_open = false;
 
@@ -34,8 +35,8 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
       break;
     case WStype_TEXT:
       Serial.printf("[WS] get text: %s\n", payload);
-      // send message to server
-      // webSocket.sendTXT("message here");
+
+      runCmd(payload);
       break;
     case WStype_BIN:
     case WStype_ERROR:
@@ -152,6 +153,9 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   syncNTPTime();
   ntpPrintTime();
 
+  // Get Schedule
+  Schedule_setup();
+
   // Send Wifi Connect Status
   if (deviceConnected) {
     writeString("{\"wifi\": 1, \"chip_id\": \"" + String(ESP.getEfuseMac(), HEX) + "\"}");
@@ -195,13 +199,18 @@ void loop() {
     }
   }
 
+  if ((millis() - lastScheduleEventTime) > 60000) {
+    Schedule_check();
+    lastScheduleEventTime = millis();
+  }
+
   if (deviceConnected) {
     loopBLE();
   } else if (WiFi.status() == WL_CONNECTED) {
     WebSocket_loop();
-    if (is_scale_enable && (millis() - lastTime) > 10000) {
-      sendDeviceData();
-      lastTime = millis();
+    if (is_scale_enable && (millis() - lastHttpEventTime) > 15000) {
+      postDeviceData();
+      lastHttpEventTime = millis();
     }
   }
 }
