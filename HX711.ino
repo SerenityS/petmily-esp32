@@ -31,7 +31,7 @@
 #define LOADCELL_SCK_PIN 22
 
 extern HX711 scale;
-extern bool is_scale_enable = false;
+extern bool is_scale_enable = true;
 
 void HX711_setup() {
   Serial.println("Initialize HX711...");

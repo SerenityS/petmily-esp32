@@ -18,7 +18,9 @@ String chip_id;
 extern bool deviceConnected;
 extern bool is_scale_enable;
 
-// Local Variables for control sensors
+// Local Variables for control
+unsigned long lastTime = 0;  // Timer for deviceData
+
 bool is_cover_open = false;
 
 
@@ -195,5 +197,9 @@ void loop() {
     loopBLE();
   } else if (WiFi.status() == WL_CONNECTED) {
     WebSocket_loop();
+    if (is_scale_enable && (millis() - lastTime) > 10000) {
+      sendDeviceData();
+      lastTime = millis();
+    }
   }
 }
