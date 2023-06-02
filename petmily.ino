@@ -147,6 +147,9 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   pref.begin("WifiCred", false);
   pref.putBool("valid", true);
 
+  // Sync Time
+  syncNTPTime();
+
   // Send Wifi Connect Status
   if (deviceConnected) {
     writeString("{\"wifi\": 1, \"chip_id\": " + String(ESP.getEfuseMac(), HEX) + "}");
