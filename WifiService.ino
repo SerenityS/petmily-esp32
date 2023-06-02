@@ -25,7 +25,7 @@ bool checkCred() {
       Serial.println("SSID: " + ssid + " password: " + pw);
       hasCredentials = true;
 
-      connectWifi("DBLAB", "dbiptimen604t!");
+      connectWifi(ssid, pw);
     }
   } else {
     Serial.println("Could not find preferences, need send data over BLE");
