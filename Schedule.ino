@@ -22,7 +22,6 @@ void Schedule_check() {
   pref.begin("schedule", true);
   String scheduleJson = pref.getString("scheduleJson", "");
   pref.end();
-  Serial.println(scheduleJson);
 
   deserializeJson(doc, scheduleJson);
   for (JsonObject item : doc.as<JsonArray>()) {
