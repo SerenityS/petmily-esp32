@@ -150,6 +150,7 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
 
   // Sync Time
   syncNTPTime();
+  ntpPrintTime();
 
   // Send Wifi Connect Status
   if (deviceConnected) {
