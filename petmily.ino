@@ -152,7 +152,7 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
 
   // Send Wifi Connect Status
   if (deviceConnected) {
-    writeString("{\"wifi\": 1, \"chip_id\": " + String(ESP.getEfuseMac(), HEX) + "}");
+    writeString("{\"wifi\": 1, \"chip_id\": \"" + String(ESP.getEfuseMac(), HEX) + "\"}");
   }
 }
 
@@ -168,8 +168,9 @@ void setup() {
   WebSocket_setup();
 
   // Initalize BLE if no credential
-  // if(!hasCred)
-  startBLE();
+  if (!hasCred) {
+    startBLE();
+  }
 
   // Initialize Serial for FDX-B Tag Reader
   Serial2.begin(9600);
@@ -190,10 +191,6 @@ void loop() {
       is_cover_open = true;
       digitalWrite(13, 255);
     }
-  }
-
-  if (is_scale_enable) {
-    HX711_print();
   }
 
   if (deviceConnected) {
