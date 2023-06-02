@@ -61,6 +61,7 @@ class MyCallbacks : public BLECharacteristicCallbacks {
       pref.putString("ssid", ssid);
       pref.putString("pw", pw);
       pref.putBool("valid", false);
+      pref.end();
 
       connectWifi(ssid, pw);
     }

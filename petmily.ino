@@ -146,6 +146,7 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
   // Set true valid
   pref.begin("WifiCred", false);
   pref.putBool("valid", true);
+  pref.end();
 
   // Sync Time
   syncNTPTime();
