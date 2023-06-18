@@ -184,6 +184,10 @@ void setup() {
   // Initialize HX711 Scale
   HX711_setup();
 
+  // Initialize Motors
+  Servo_init();
+  Step_init();
+
   // TEMP: Initialize Motion Sensor LED
   pinMode(13, OUTPUT);
 }
