@@ -1,3 +1,5 @@
+#include "HX711.h"
+
 // Preference
 #include <Preferences.h>
 
@@ -17,6 +19,9 @@ String chip_id;
 // Global extern Variables
 extern bool deviceConnected;
 extern bool is_scale_enable;
+
+HX711 bowl_scale;
+HX711 feed_box_scale;
 
 // Local Variables for control
 unsigned long lastHttpEventTime = 0;
